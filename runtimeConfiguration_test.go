@@ -241,7 +241,7 @@ func TestUpdateMeasures(t *testing.T) {
 
 func TestGetStationsFromEvents(t *testing.T) {
 
-	config := runtimeConfiguration{objectsToStations: map[int]int{
+	config := RuntimeConfiguration{objectsToStations: map[int]int{
 		1000: 30001,
 		2000: 30002,
 		3000: 30001,
@@ -278,7 +278,7 @@ func TestGetStationsForSpecialDevice(t *testing.T) {
 
 	objSetOnHost1 := mapset.NewSet(1000, 2000)
 	objSetOnHost2 := mapset.NewSet(3000, 4000)
-	config := runtimeConfiguration{objectsToStations: map[int]int{
+	config := RuntimeConfiguration{objectsToStations: map[int]int{
 		1000: 30001,
 		2000: 30002,
 		3000: 30003,

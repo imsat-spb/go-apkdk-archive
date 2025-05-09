@@ -33,14 +33,14 @@ func (rt *runtimeSensorMappingInfo) IsValueAssigned() bool {
 	return !rt.lastUpdateTime.IsZero()
 }
 
-type runtimeConfiguration struct {
+type RuntimeConfiguration struct {
 	lock              sync.Mutex
 	mappings          map[int32]map[uint16]*runtimeSensorMappingInfo
 	objectsToStations map[int]int
 	hostToObjects     map[int]mapset.Set
 }
 
-func (runtimeConfig *runtimeConfiguration) GetUpdateRequestItemsFromPackage(dataPackage *core.DataPackage) ([]*RequestItem, error) {
+func (runtimeConfig *RuntimeConfiguration) GetUpdateRequestItemsFromPackage(dataPackage *core.DataPackage) ([]*RequestItem, error) {
 
 	updateResult, err := runtimeConfig.updateFromPackage(dataPackage)
 
@@ -54,8 +54,8 @@ func (runtimeConfig *runtimeConfiguration) GetUpdateRequestItemsFromPackage(data
 	return updateResult.getArchiveServerRequest(), nil
 }
 
-func NewRuntimeConfiguration(info *ConfigurationInfo) *runtimeConfiguration {
-	result := &runtimeConfiguration{
+func NewRuntimeConfiguration(info *ConfigurationInfo) *RuntimeConfiguration {
+	result := &RuntimeConfiguration{
 		mappings:          make(map[int32]map[uint16]*runtimeSensorMappingInfo),
 		objectsToStations: make(map[int]int),
 		hostToObjects:     make(map[int]mapset.Set)}
@@ -86,7 +86,7 @@ func NewRuntimeConfiguration(info *ConfigurationInfo) *runtimeConfiguration {
 	return result
 }
 
-func (runtimeConfig *runtimeConfiguration) updateFromFullStatePackage(packageInfo *core.DataPackage) (updateEventInfo, error) {
+func (runtimeConfig *RuntimeConfiguration) updateFromFullStatePackage(packageInfo *core.DataPackage) (updateEventInfo, error) {
 	if !(packageInfo.Format == core.PackageFormatFullObjectStates || packageInfo.Format == core.PackageFormatFullFailureStates ||
 		packageInfo.Format == core.PackageFormatFullAccidentStates) {
 		return nil, nil
@@ -105,7 +105,7 @@ func (runtimeConfig *runtimeConfiguration) updateFromFullStatePackage(packageInf
 	return result, nil
 }
 
-func (runtimeConfig *runtimeConfiguration) updateFromEventsPackage(packageInfo *core.DataPackage) (updateEventInfo, error) {
+func (runtimeConfig *RuntimeConfiguration) updateFromEventsPackage(packageInfo *core.DataPackage) (updateEventInfo, error) {
 	if !(packageInfo.Format == core.PackageFormatEvents ||
 		packageInfo.Format == core.PackageFormatChangeObjectStates ||
 		packageInfo.Format == core.PackageFormatChangeFailureStates) {
@@ -133,7 +133,7 @@ func (runtimeConfig *runtimeConfiguration) updateFromEventsPackage(packageInfo *
 	return result, nil
 }
 
-func (runtimeConfig *runtimeConfiguration) getStationsForSpecialDevice(specialDeviceId int32) []int {
+func (runtimeConfig *RuntimeConfiguration) getStationsForSpecialDevice(specialDeviceId int32) []int {
 
 	hostId, err := core.GetHostForSpecialDevice(specialDeviceId)
 	if err != nil {
@@ -156,7 +156,7 @@ func getIntSlice(aSet mapset.Set) []int {
 	return result
 }
 
-func (runtimeConfig *runtimeConfiguration) getStationsForObjects(objects mapset.Set) []int {
+func (runtimeConfig *RuntimeConfiguration) getStationsForObjects(objects mapset.Set) []int {
 	stations := mapset.NewSet()
 
 	for o := range objects.Iter() {
@@ -168,14 +168,14 @@ func (runtimeConfig *runtimeConfiguration) getStationsForObjects(objects mapset.
 	return getIntSlice(stations)
 }
 
-func (runtimeConfig *runtimeConfiguration) getStationsForEvents(events *core.PackageEvents) []int {
+func (runtimeConfig *RuntimeConfiguration) getStationsForEvents(events *core.PackageEvents) []int {
 
 	objects := events.GetObjects()
 
 	return runtimeConfig.getStationsForObjects(objects)
 }
 
-func (runtimeConfig *runtimeConfiguration) updateFromRawDataPackage(packageInfo *core.DataPackage) (updateEventInfo, error) {
+func (runtimeConfig *RuntimeConfiguration) updateFromRawDataPackage(packageInfo *core.DataPackage) (updateEventInfo, error) {
 	if packageInfo.Format != core.PackageFormatData {
 		return nil, nil
 	}
@@ -225,7 +225,7 @@ func (runtimeConfig *runtimeConfiguration) updateFromRawDataPackage(packageInfo 
 	return result, nil
 }
 
-func (runtimeConfig *runtimeConfiguration) updateFromPackage(packageInfo *core.DataPackage) (updateEventInfo, error) {
+func (runtimeConfig *RuntimeConfiguration) updateFromPackage(packageInfo *core.DataPackage) (updateEventInfo, error) {
 	runtimeConfig.lock.Lock()
 	defer runtimeConfig.lock.Unlock()
 
