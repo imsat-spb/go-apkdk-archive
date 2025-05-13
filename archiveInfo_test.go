@@ -1,24 +1,24 @@
 package archive
 
 import (
+	configuration "github.com/imsat-spb/go-apkdk-configuration"
+	"github.com/stretchr/testify/assert"
 	"testing"
 )
 
 func TestNewArchiveEmptyInfo(t *testing.T) {
 
-	/*projectInfo := tests.CreateTestProjectInfo(100, 200, &configuration.TestProjectData{})
+	projectInfo := &configuration.TestProjectData{}
 	info, err := NewConfigurationInfo(projectInfo)
 
 	assert.Nil(t, err)
-	assert.Equal(t, info.projectId, 100)
-	assert.Equal(t, info.versionId, 200)
 
-	assert.Len(t, info.mappings, 0)*/
+	assert.Len(t, info.mappings, 0)
 }
 
 func TestNewArchiveSingleMeasureInfo(t *testing.T) {
 
-	/*const typeId = 1
+	const typeId = 1
 	const typeName = "Type1"
 	const objectName = "test1"
 	const objectId = 1
@@ -37,21 +37,27 @@ func TestNewArchiveSingleMeasureInfo(t *testing.T) {
 	const hostId = 175
 
 	testProject := configuration.TestProjectData{
-		Objects:           []configuration.ObjectInfo{{Id: objectId, TypeId: typeId, Name: objectName, StationId: stationId}},
-		Parameters:        []configuration.ObjectParameter{{Id: measureId, Name: measureName, ShortName: measureShortName, UnitOfMeasure: "Секунды,с"}},
-		Attributes:        []configuration.ObjectAttribute{{Id: attributeId, Name: attributeName, UnitOfMeasure: "В"}},
-		ParameterMappings: []configuration.ObjectParameterMapping{{Id: measureId, ObjectId: objectId, DeviceId: deviceId, SensorId: sensorId}},
-		AttributeMappings: []configuration.ObjectAttributeMapping{{Id: attributeId, ObjectId: objectId, DeviceId: deviceId, SensorId: sensorAttrId}},
-		Hosts:             []configuration.NestedHost{{Id: hostId, Devices: []configuration.Device{{Id: deviceId, SensorCount: 100, BitsPerSensor: 32}}}},
+		Devices: map[int]*configuration.Device{
+			deviceId: {Id: deviceId, SensorCount: 100, BitsPerSensor: 32},
+		},
+		ObjectsToHosts: map[int]int{objectId: hostId},
+		Objects: map[int]*configuration.ObjectInfo{
+			objectId: {Id: objectId, TypeId: typeId, Name: objectName, StationId: stationId}},
+		Parameters: map[int]*configuration.ObjectParameter{
+			measureId: {Id: measureId, Name: measureName, ShortName: measureShortName, UnitOfMeasure: "Секунды,с"}},
+		Attributes: map[int]*configuration.ObjectAttribute{
+			attributeId: {Id: attributeId, Name: attributeName, UnitOfMeasure: "В"}},
+		ParameterMappings: map[configuration.ParameterMappingKey]*configuration.ObjectParameterMapping{
+			configuration.NewParameterMappingKey(objectId, measureId): {Id: measureId, ObjectId: objectId, DeviceId: deviceId, SensorId: sensorId}},
+		AttributeMappings: map[configuration.ParameterMappingKey]*configuration.ObjectAttributeMapping{
+			configuration.NewParameterMappingKey(objectId, attributeId): {Id: attributeId, ObjectId: objectId, DeviceId: deviceId, SensorId: sensorAttrId}},
+		Hosts: []configuration.NestedHost{{Id: hostId, Devices: []configuration.Device{{Id: deviceId, SensorCount: 100, BitsPerSensor: 32}}}},
 	}
 
-	//configuration.ProjectInformation.
-	projectInfo := tests.CreateTestProjectInfo(100, 200, &testProject)
+	var projectInfo configuration.ProjectInformation = &testProject
 	info, err := NewConfigurationInfo(projectInfo)
 
 	assert.Nil(t, err)
-	assert.Equal(t, info.projectId, 100)
-	assert.Equal(t, info.versionId, 200)
 
 	assert.Len(t, info.mappings, 1)
 	assert.Len(t, info.mappings[deviceId], 2)
@@ -87,5 +93,5 @@ func TestNewArchiveSingleMeasureInfo(t *testing.T) {
 
 	am := dm[sensorAttrId]
 	assert.Len(t, am, 1)
-	assert.Equal(t, *am[0], expectedAttribute)*/
+	assert.Equal(t, *am[0], expectedAttribute)
 }
